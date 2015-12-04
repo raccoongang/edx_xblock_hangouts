@@ -3,6 +3,11 @@
 <script src="https://apis.google.com/js/platform.js?onload=gApiOnLoadCallback" async defer></script>
 <div class="hangouts_button"></div>
 <p style="visibility: hidden;opacity: 0">HangoutsXBlock: count is now
-    <span class='count'>{self.count}</span> (click me to increment).
+    <span class='count'></span> (click me to increment).
 </p>
 </div>
+{% if is_course_staff %}
+    course_staff
+{% else %}
+    no course_staff
+{% endif %}
