@@ -1,6 +1,6 @@
 /* Javascript for HangoutsXBlock. */
 function HangoutsXBlock(runtime, element) {
-    var saveYoutubeUrl = runtime.handlerUrl(element, 'save_youtube_url');
+    var saveYoutubeUrl = runtime.handlerUrl(element, 'save_data_hangouts');
     var getYoutubeUrl = runtime.handlerUrl(element, 'get_youtube_url');
 
     function getCookie(name) {

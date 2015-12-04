@@ -4,7 +4,7 @@ from django.template import Template, Context
 from webob import Response
 from student.models import CourseEnrollment
 from xblock.core import XBlock
-from xblock.fields import Scope, String
+from xblock.fields import Scope, String, DateTime
 from xblock.fragment import Fragment
 from xblockutils.studio_editable import StudioEditableXBlockMixin
 
@@ -27,7 +27,12 @@ class HangoutsXBlock(StudioEditableXBlockMixin, XBlock):
         scope=Scope.settings,
     )
 
-    editable_fields = ('display_name', )
+    date_aired = String(
+        scope=Scope.settings,
+        display_name=_("Date aired"),
+    )
+
+    editable_fields = ('display_name', 'date_aired', )
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -55,11 +60,17 @@ class HangoutsXBlock(StudioEditableXBlockMixin, XBlock):
         emails_enrolled = list(CourseEnrollment.objects.users_enrolled_in(course_id=self.course_id)\
             .values_list('email', flat=True))
 
+        start_date = None
+        if self.date_aired:
+            start_date = self.date_aired
+        elif self.start:
+            start_date = self.start.strftime('%Y-%m-%dT%H:%M')
+
         json_args = {
             'is_course_staff': is_course_staff,
             'title': self.display_name,
             'emails_enrolled': emails_enrolled,
-            'start_date': self.start.strftime('%Y-%m-%dT%H:%M:%S.%f') if self.start else None,
+            'start_date': start_date,
             'youtube_url': self.youtube_url
         }
         frag.initialize_js('HangoutsXBlock', json_args=json_args)
@@ -71,8 +82,13 @@ class HangoutsXBlock(StudioEditableXBlockMixin, XBlock):
         return template.render(Context(context))
 
     @XBlock.handler
-    def save_youtube_url(self, request, suffix=''):
-        self.youtube_url = request.params.get('youtube_url', '')
+    def save_data_hangouts(self, request, suffix=''):
+        youtube_url = request.params.get('youtube_url')
+        date_aired = request.params.get('date_aired')
+        if youtube_url:
+            self.youtube_url = youtube_url
+        if date_aired:
+            self.date_aired = date_aired
         return Response(json_body={'save': True})
 
     @XBlock.json_handler
