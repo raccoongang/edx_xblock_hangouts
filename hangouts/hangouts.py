@@ -1,6 +1,7 @@
 import pkg_resources
 
 from django.template import Template, Context
+from webob import Response
 from student.models import CourseEnrollment
 from xblock.core import XBlock
 from xblock.fields import Scope, String
@@ -21,7 +22,12 @@ class HangoutsXBlock(StudioEditableXBlockMixin, XBlock):
         scope=Scope.settings,
     )
 
-    editable_fields = ('display_name',)
+    youtube_url = String(
+        default="",
+        scope=Scope.settings,
+    )
+
+    editable_fields = ('display_name', )
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -53,7 +59,8 @@ class HangoutsXBlock(StudioEditableXBlockMixin, XBlock):
             'is_course_staff': is_course_staff,
             'title': self.display_name,
             'emails_enrolled': emails_enrolled,
-            'start_date': self.start.strftime('%Y-%m-%dT%H:%M:%S.%f') if self.start else None
+            'start_date': self.start.strftime('%Y-%m-%dT%H:%M:%S.%f') if self.start else None,
+            'youtube_url': self.youtube_url
         }
         frag.initialize_js('HangoutsXBlock', json_args=json_args)
         return frag
@@ -62,6 +69,15 @@ class HangoutsXBlock(StudioEditableXBlockMixin, XBlock):
         template_str = self.resource_string(template_path)
         template = Template(template_str)
         return template.render(Context(context))
+
+    @XBlock.handler
+    def save_youtube_url(self, request, suffix=''):
+        self.youtube_url = request.params.get('youtube_url', '')
+        return Response(json_body={'save': True})
+
+    @XBlock.json_handler
+    def get_youtube_url(self, data, suffix=''):
+        return {"youtube_url": self.youtube_url}
 
     @staticmethod
     def workbench_scenarios():

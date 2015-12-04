@@ -1,20 +1,25 @@
 /* Javascript for HangoutsXBlock. */
 function HangoutsXBlock(runtime, element) {
+    var saveYoutubeUrl = runtime.handlerUrl(element, 'save_youtube_url');
+    var getYoutubeUrl = runtime.handlerUrl(element, 'get_youtube_url');
 
-    function updateCount(result) {
-        $('.count', element).text(result.count);
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 
-    var handlerUrl = runtime.handlerUrl(element, 'increment_count');
-
-    $('p', element).click(function(eventObject) {
-        $.ajax({
-            type: "POST",
-            url: handlerUrl,
-            data: JSON.stringify({"hello": "world"}),
-            success: updateCount
-        });
-    });
+    var csrfmiddlewaretoken = getCookie('csrftoken');
 
     window.gApiOnLoadCallback = function() {
         console.log('gapi ready, ', arguments);
