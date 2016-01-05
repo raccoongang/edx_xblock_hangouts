@@ -1,13 +1,18 @@
-<div class="hangouts_block">
-<script>console.log('im here!');</script>
+<style>
+
+
+</style>
+<div class="hangouts-block">
 <script src="https://apis.google.com/js/platform.js?onload=gApiOnLoadCallback" async defer></script>
-<div class="hangouts_button"></div>
-<p style="visibility: hidden;opacity: 0">HangoutsXBlock: count is now
-    <span class='count'></span> (click me to increment).
-</p>
-</div>
+	<div class="hangouts-content">
+		<h1 class="hangouts-title"></h1>
+		<h3>
+			<div class="hangouts-date"></div>
+			<div class="hangouts-timer"></div>
+		</h3>
 {% if is_course_staff %}
-    course_staff
+		<div class="hangouts-button"></div>
 {% else %}
-    no course_staff
 {% endif %}
+	</div>
+</div>

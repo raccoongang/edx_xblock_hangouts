@@ -25,6 +25,7 @@ class HangoutsXBlock(StudioEditableXBlockMixin, XBlock):
     youtube_url = String(
         default="",
         scope=Scope.settings,
+        display_name=_("YouTube video ID"),
     )
 
     date_aired = String(
@@ -32,7 +33,7 @@ class HangoutsXBlock(StudioEditableXBlockMixin, XBlock):
         display_name=_("Date aired"),
     )
 
-    editable_fields = ('display_name', 'date_aired', )
+    editable_fields = ('display_name', 'date_aired', 'youtube_url')
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -91,9 +92,13 @@ class HangoutsXBlock(StudioEditableXBlockMixin, XBlock):
             self.date_aired = date_aired
         return Response(json_body={'save': True})
 
-    @XBlock.json_handler
+    # @XBlock.json_handler
+    # def get_youtube_url(self, data, suffix=''):
+    #     return {"youtube_url": self.youtube_url}
+
+    @XBlock.handler
     def get_youtube_url(self, data, suffix=''):
-        return {"youtube_url": self.youtube_url}
+        return Response(json_body={"youtube_url": self.youtube_url})
 
     @staticmethod
     def workbench_scenarios():
