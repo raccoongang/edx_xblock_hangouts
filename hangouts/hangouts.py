@@ -2,7 +2,7 @@ import pkg_resources
 
 from django.template import Template, Context
 from webob import Response
-from student.models import CourseEnrollment
+from common.djangoapps.student.models import CourseEnrollment
 from xblock.core import XBlock
 from xblock.fields import Scope, String, DateTime
 from xblock.fragment import Fragment
